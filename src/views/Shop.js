@@ -11,7 +11,7 @@ export default class Shop extends Component {
     constructor() {
         super();
         this.state={
-            products:[],
+            items:[],
             categories:[],
             cart:{},
             itemStart: 0,
@@ -23,9 +23,9 @@ export default class Shop extends Component {
     async componentDidMount(){
       Promise.all([
 
-        axios.get("https://fakestoreapi.com/products?limit=15")
+        axios.get("https://fakestoreapi.com/products?")
         .then((response) => {
-          {this.setState({products: response.data})}   
+          {this.setState({items: response.data})}   
 }),  
 
         axios.get("https://fakestoreapi.com/products/categories")
@@ -58,14 +58,14 @@ export default class Shop extends Component {
       const filterProducts = category =>{
         axios.get("https://fakestoreapi.com/products/category/" + category.target.value)
         .then((response) => {
-          {this.setState({products:response.data})}  
+          {this.setState({items:response.data})}  
           })};
 
 
       const allProducts = () =>{
         axios.get("https://fakestoreapi.com/products")
         .then((response) => {
-          {this.setState({products:response.data})}  
+          {this.setState({items:response.data})}  
       })};
 
       const handlePrev=()=>{
@@ -84,7 +84,7 @@ export default class Shop extends Component {
 
         pageStyles:{
             backgroundImage: "url('https://i5.walmartimages.com/asr/fbfac9f3-6d5d-47b7-be56-2ce4f06cb996_1.db30e86c8960b6691640705c01837146.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF')",
-            backgroundColor: "grey",
+            backgroundColor: "beige",
             
         },
 
@@ -114,14 +114,14 @@ export default class Shop extends Component {
     <Col md={9}>
     {/* item section */}
             <div className="d-flex justify-content-xl-around">
-                <Button variant="danger" className={"me-2 " + (this.state.itemStart===0?"disabled":'')}  onClick={()=>this.props.handlePrev()}>{"<< Prev"}</Button>
-                <Button variant="success" className={" " + (this.state.products?.length<=this.state.itemEnd?"disabled":'')} onClick={()=>this.props.handleNext()}>{"Next >>"}</Button>
+                <Button variant="danger" className={"me-2 " + (this.state.itemStart===0?"disabled":'')}  onClick={()=>handlePrev()}>{"<< Prev"}</Button>
+                <Button variant="success" className={" " + (this.state.items?.length<=this.state.itemEnd?"disabled":'')} onClick={()=>handleNext()}>{"Next >>"}</Button>
             </div>
         <Row>
 
             <div id="products">
-                {this.state.products.slice(this.state.itemStart,this.state.itemEnd)
-                    .map((product) =><ItemCard key={product.id} id={product.id} item={product} addToCart={() => addToCart(product)}/>)}
+                {this.state.items.slice(this.state.itemStart,this.state.itemEnd)
+                    .map((item) =><ItemCard key={item.id} id={item.id} item={item} addToCart={() => addToCart(item)}/>)}
             </div>
         </Row>
 

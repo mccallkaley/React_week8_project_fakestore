@@ -17,7 +17,8 @@ import CreateCats from "./views/CreateCats";
 import EditCats from "./views/EditCats";
 import CreateItems from "./views/CreateItems";
 import EditItems from "./views/EditItems";
-import axios from 'axios'
+import axios from 'axios';
+import Cart from "./views/Cart"
 
 import { Container } from 'react-bootstrap'
 
@@ -60,7 +61,7 @@ export default class App extends Component {
     this.setState({ user }, () => console.log("User is", this.state.user));
   };
 
-  setName = (username) =>{
+  /*setName = (username) =>{
     let name = "";
     axios.get('https://fakestoreapi.com/users')
     .then(res=>{
@@ -76,7 +77,7 @@ export default class App extends Component {
     })
 
     console.log(name);
-  }
+  }*/
 
 
 
@@ -190,20 +191,29 @@ export default class App extends Component {
                 render={()=><Shop addToCart={this.addToCart}/>} />
             <ProtectedRoute exact path ="/item/:id" token={this.state.token} 
                 render={(props)=><SingleItem {...props}/>} />
+
            
-            <AdminRoute exact path ="/createcats" isAdmin={this.state.isAdmin} token={this.state.token} 
+            <ProtectedRoute exact path ="/createcats"  token={this.state.token} 
                 render={()=><CreateCats/>} />
-            <AdminRoute exact path ="/editcats" isAdmin={this.state.isAdmin} token={this.state.token} 
+            <ProtectedRoute exact path ="/editcats"  token={this.state.token} 
                 render={()=><EditCats/>} />
 
-            <AdminRoute exact path ="/createitems" isAdmin={this.state.isAdmin} token={this.state.token} 
+            <ProtectedRoute exact path ="/createitems"  token={this.state.token} 
                 render={()=><CreateItems/>} />
-            <AdminRoute exact path ="/edititems" isAdmin={this.state.isAdmin} token={this.state.token} 
+            <ProtectedRoute exact path ="/edititems"  token={this.state.token} 
                 render={()=><EditItems/>} />
+            <ProtectedRoute exact path ="/cart" token={this.state.token} 
+                render={()=><Cart 
+                            cart={this.state.cart} 
+                            removeFromCart={this.removeFromCart} 
+                            removeAllFromCart={this.removeAllFromCart}
+                            getCartItemTotal={this.getCartItemTotal}
+                            getCartTotalPrice={this.getCartTotalPrice}
+                            />} />
+   
 
- 
             <Route exact path ="/login" 
-                render={()=><Login setToken={this.setToken} setName={this.setName}/>} />
+                render={()=><Login setToken={this.setToken} setName={this.setName} setUser={this.setUser}/>} />
             <ProtectedRoute exact path ="/logout"
                 token={this.state.token}
                 render={()=><Logout doLogout={this.doLogout}/>}/>

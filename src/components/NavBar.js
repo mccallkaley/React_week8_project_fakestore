@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import {Navbar, Container, Nav, NavDropdown} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
 
-
+   //var user = JSON.parse(localStorage.getItem('user')); or('username')
 export default class NavBar extends Component {
     render() {
-        var user = JSON.parse(localStorage.getItem('name'));
+        
         return (
                 <Navbar bg="dark" variant="dark" expand="lg" style={{marginBottom:"20px"}}>
                     <Container>
@@ -18,11 +18,9 @@ export default class NavBar extends Component {
                                 
                                 <Nav.Link as={Link} to="/">Home</Nav.Link>
                                 <Nav.Link as={Link} to="/shop">Shop</Nav.Link>
-                                <Nav.Link as={Link} to="/page2">Page2</Nav.Link>
-                                <Nav.Link as={Link} to="/page3">Page3</Nav.Link>
-                                <Nav.Link as={Link} to="/example">Example</Nav.Link>
+                                <Nav.Link as={Link} to="/cart">Cart</Nav.Link>
                                 <Nav.Link as={Link} to="/logout">Logout</Nav.Link>
-                                <Nav.Link as={Link} to={`/${user}`}>Welcome, </Nav.Link>
+                                  
                                 {/* admin dropdown area */}
                                 {
                                     this.props.isAdmin?
@@ -41,10 +39,15 @@ export default class NavBar extends Component {
                             <Nav.Link as={Link} to="/login">Login</Nav.Link>
                             }
                         </Nav>
+                        <span className="float-end" style={{color:'white'}}>Welcome, {this.props.user}</span>
+                        
                         <span className="float-end" style={{color:'white'}}>total: ${this.props.getCartTotalPrice().toFixed(2)}, items:{this.props.getCartItemTotal()}</span>
                         </Navbar.Collapse>
                     </Container>
                 </Navbar>
+                // <input onChange={(event)=>this.props.setUser(event.target.value)}></input>
+
+
         )
     }
 }

@@ -2,23 +2,24 @@ import React, { Component } from 'react'
 import {Formik, Form, Field} from 'formik';
 import * as Yup from 'yup';
 import {Redirect} from 'react-router-dom';
-import {getCategories} from '../api/apiCategory'
-import {postItem} from '../api/apiItems'
+import axios from 'axios'
+//import {getCategories} from '../api/apiCategory'
+//import {postItem} from '../api/apiItems'
 
 const FormSchema = Yup.object().shape({
-    "name": Yup.string().required("Required"),
+    "title": Yup.string().required("Required"),
     "description": Yup.string().required("Required"),
     "price":Yup.string().matches(/^\d+(\.\d{1,2})?$/,"Must be a Valid Price").required("Required"),
-    "img":Yup.string().required("Required"),
-    "category_id":Yup.number().integer().required("Required")
+    "image":Yup.string().required("Required"),
+    "category":Yup.number().integer().required("Required")
 })
 
 const initialValues = {
-    name:'',
-    description:'',
+    title:'',
     price:'',
-    img:'',
-    category_id:''
+    description:'',
+    image:'',
+    category:''
 }
 
 export default class CreateItems extends Component {
@@ -34,34 +35,39 @@ export default class CreateItems extends Component {
     }
 
     componentDidMount(){
-        this.getAllCats()
+        
     }
 
-    handleSubmit=async (values)=>{
-        const res = await postItem(localStorage.getItem('token'),values)
-        if (res){
-            this.setState({successfulPost:true})
-        }else{
-            this.setState({unsuccessfulPost:true})
-        }
+    handleSubmit=({title, price, description, image, category})=>{
+        axios.post(`https://fakestoreapi.com/products`, {
+            title:title,
+            price:price,
+            description:description,
+            image:image,
+            category:category
+        })
+        .then(res=>res.data)
+        .then(json=>console.log(json))
+        .then(()=>console.log("Item Created"))
     }
 
-    getAllCats = async () =>{
-        const cats = await getCategories(localStorage.getItem('token'))
-        if(cats===400){this.setState({tokenError:true})}
-        if(cats===500){this.setState({serverErrorCats:true})}
-        if (cats !==500 && cats !==400){this.setState({categories:cats})}
-    }
 
     render() {
+        const styles={
+
+            pageStyles:{
+                backgroundColor: "pink",
+                padding:"80px",
+                minHeight:"94vh"
+            },
+            formHead:{
+                color: "azure",
+                fontWeight:"bold"
+            }
+
+        }
         return (
-            <div>
-            {this.state.successfulPost?<small style={{color:"green"}}>Your Item Was Created</small>:""}
-            {this.state.unsuccessfulPost?<small style={{color:"red"}}>Error Creating Item, Please Try again</small>:""}
-            {this.state.serverErrorCats?<small style={{color:"red"}}>Error try again later</small>:''}
-            {this.state.tokenError?<Redirect to='/login'/>:''}       
-
-
+            <div style={styles.pageStyles}>
                 <br/>
                 <Formik
                 initialValues={initialValues}
@@ -76,30 +82,27 @@ export default class CreateItems extends Component {
                     {
                         ({errors, touched})=>(
                             <Form>
-                                <label htmlFor="name" className="form-label">Item Name</label>
-                                <Field name="name" className="form-control"/>
-                                {errors.name && touched.name ? (<div style={{color:'red'}}>{errors.name}</div>):null}
+                                <label style={styles.formLabels} htmlFor="title" className="form-label">Item Name</label>
+                                <Field name="title" className="form-control"/>
+                                {errors.title && touched.title ? (<div style={{color:'red'}}>{errors.title}</div>):null}
 
-                                <label htmlFor="description" className="form-label">Description</label>
-                                <Field name="description" className="form-control"/>
-                                {errors.description && touched.description ? (<div style={{color:'red'}}>{errors.description}</div>):null}
-
-                                <label htmlFor="price" className="form-label">Price</label>
+                                <label style={styles.formLabels} htmlFor="price" className="form-label">Price</label>
                                 <Field name="price" className="form-control"/>
                                 {errors.price && touched.price ? (<div style={{color:'red'}}>{errors.price}</div>):null}
 
-                                <label htmlFor="img" className="form-label">Image</label>
-                                <Field name="img" className="form-control"/>
-                                {errors.img && touched.img ? (<div style={{color:'red'}}>{errors.img}</div>):null}
+                                <label style={styles.formLabels} htmlFor="description" className="form-label">Description</label>
+                                <Field name="description" className="form-control"/>
+                                {errors.description && touched.description ? (<div style={{color:'red'}}>{errors.description}</div>):null}
 
-                                <label htmlFor="category_id" className="form-label">Category</label>
-                                <Field as="select" name="category_id" className="form-select" >
-                                    {this.state.categories?.map(
-                                        (c)=><option key={c.id} value={c.id}>{c.name}</option>
-                                    )}
-                                </Field>
-                                {errors.category_id && touched.category_id ? (<div style={{color:'red'}}>{errors.category_id}</div>):null}
+                                <label style={styles.formLabels} htmlFor="image" className="form-label">Image</label>
+                                <Field name="image" className="form-control"/>
+                                {errors.image && touched.image ? (<div style={{color:'red'}}>{errors.image}</div>):null}
 
+                                <label style={styles.formLabels} htmlFor="category" className="form-label">Category</label>
+                                <Field  name="category" className="form-control"/>
+                         
+                                {errors.category && touched.category ? (<div style={{color:'red'}}>{errors.category}</div>):null}
+                                <br/>
                                 <button className="btn btn-primary form-control" type="submit">Create Item</button>
                             </Form>
                         )

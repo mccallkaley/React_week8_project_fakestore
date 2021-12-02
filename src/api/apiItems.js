@@ -1,4 +1,5 @@
 import apiClientWithToken from './clientTokenAuth'
+import axios from 'axios'
 
 const endpoint = "/api/item";
 
@@ -10,7 +11,8 @@ export const getItems = async (token) =>{
     return
 }
 
-export const getItemsByCat = async (token,id)=>{
+//getItemsByCat
+export const filterProducts = async (token,id)=>{
     const response = await apiClientWithToken(token).get(endpoint+'/category/'+id)
     if (400 <= response.status && response.status < 500){return 400;}
     if (500 <= response.status && response.status < 600){return 500;}
@@ -19,7 +21,7 @@ export const getItemsByCat = async (token,id)=>{
 }
 
 export const getItem = async (token,id)=>{
-    const response = await apiClientWithToken(token).get(endpoint+'/'+id)
+    const response = await apiClientWithToken(token);axios.get(('https://fakestoreapi.com/products')+'/'+id)
     if (400 <= response.status && response.status < 500){return 400;}
     if (500 <= response.status && response.status < 600){return 500;}
     if (response.ok){return response.data}
